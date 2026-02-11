@@ -1,1 +1,506 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RALLY EDUCATIVO · PASO A PASO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #f0f7fc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 8px 0 #1e3a5f, 0 16px 32px rgba(0,40,80,0.1);
+            padding: 2rem;
+            border: 2px solid #2c5f8a;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            border-bottom: 3px solid #d0e2ef;
+            padding-bottom: 1rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0a3144;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            background: #1e4a6b;
+            color: white;
+            padding: 6px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid #aad0f5;
+        }
+
+        /* INSTRUCCIÓN ÚNICA - GRANDE Y CENTRAL */
+        .instruccion-unica {
+            background: #fef4e0;
+            border: 5px solid #ff9800;
+            border-radius: 40px;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 0 #b85e2e;
+            transition: all 0.2s;
+        }
+
+        .instruccion-texto {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #2c3e50;
+            text-align: center;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            word-break: break-word;
+        }
+
+        /* CANVAS */
+        .canvas-frame {
+            background: white;
+            border-radius: 24px;
+            border: 3px solid #2c5f8a;
+            padding: 10px;
+            box-shadow: 0 6px 0 #1a384b;
+            margin-bottom: 1.8rem;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #b4d4e8;
+        }
+
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+
+        /* BOTÓN ÚNICO - SOLO SIGUIENTE */
+        .nav-simple {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1.2rem;
+        }
+
+        .btn-next {
+            background: #1e4a6b;
+            border: none;
+            border-bottom: 10px solid #0d2a3b;
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            padding: 1.2rem 3.5rem;
+            border-radius: 80px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            transition: 0.04s linear;
+            box-shadow: 0 10px 0 #0a1e2b, 0 10px 30px rgba(0,0,0,0.2);
+            letter-spacing: 4px;
+        }
+
+        .btn-next:active {
+            transform: translateY(10px);
+            border-bottom-width: 4px;
+            box-shadow: 0 4px 0 #0a1e2b;
+        }
+
+        .btn-next span {
+            font-size: 2.5rem;
+        }
+
+        /* INDICADOR DE PASO - MÍNIMO */
+        .paso-indicator {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e4a6b;
+            background: #e3f0fa;
+            display: inline-block;
+            padding: 0.5rem 1.8rem;
+            border-radius: 50px;
+            border: 2px solid #2c5f8a;
+        }
+
+        .footer-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .p0-highlight {
+            background: #ffe0b0;
+            border: 5px solid #ff6b4a;
+            box-shadow: 0 8px 0 #b33a2e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header con nuevo nombre -->
+        <div class="header">
+            <h1>🏁 RALLY EDUCATIVO</h1>
+            <span class="badge">RUTA LINEAL</span>
+        </div>
+
+        <!-- UNA SOLA INSTRUCCIÓN QUE CAMBIA SEGÚN EL PASO -->
+        <div class="instruccion-unica" id="instruccionPanel">
+            <div class="instruccion-texto" id="instruccionPrincipal">
+                ⏸️ 0. PREPARADO · PRESIONA SIGUIENTE PARA COMENZAR
+            </div>
+        </div>
+
+        <!-- CANVAS DE ANIMACIÓN -->
+        <div class="canvas-frame">
+            <div class="canvas-wrapper">
+                <canvas id="normalCanvas" width="900" height="506"></canvas>
+            </div>
+        </div>
+
+        <!-- ÚNICO BOTÓN: SIGUIENTE -->
+        <div class="nav-simple">
+            <button class="btn-next" id="siguienteBtn">
+                <span>→</span> SIGUIENTE
+            </button>
+        </div>
+
+        <!-- SOLO INDICADOR DE PASO, NADA MÁS -->
+        <div class="footer-center">
+            <span class="paso-indicator" id="pasoActualTexto">PASO 0/3</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('normalCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Elementos UI
+            const instruccionPrincipal = document.getElementById('instruccionPrincipal');
+            const instruccionPanel = document.getElementById('instruccionPanel');
+            const pasoActualTexto = document.getElementById('pasoActualTexto');
+
+            // ---------- POSICIONES ----------
+            const INICIO_X = 80;
+            const SILLA_X = 680;
+            const PIZARRA_X = 80;
+
+            // ---------- PERSONAJE ----------
+            let x = INICIO_X + 10;
+            let paso = 0; // 0: preparado, 1: corre a silla, 2: regresa, 3: gana
+            let haEscrito = false;
+            let mirandoSilla = false;
+            let targetX = INICIO_X + 10;
+            
+            // Animación
+            let piernaPhase = 0;
+            let brazoPhase = 0;
+            let writeShake = 0;
+
+            // ---------- INSTRUCCIONES POR PASO ----------
+            const instrucciones = {
+                0: "⏸️ 0. PREPARADO · PRESIONA SIGUIENTE PARA COMENZAR",
+                1: "🎯 1. CORRE A LA SILLA Y OBSERVA TU OBJETIVO",
+                2: "📝 2. REGRESA AL PIZARRÓN A COMPLETAR LO SOLICITADO",
+                3: "🏆 3. EL PRIMERO QUE TERMINE CORRECTAMENTE GANA"
+            };
+
+            // ---------- ACTUALIZAR UI (SOLO INSTRUCCIÓN Y PASO) ----------
+            function actualizarUI() {
+                instruccionPrincipal.innerText = instrucciones[paso];
+                pasoActualTexto.innerText = `PASO ${paso}/3`;
+                
+                // Estilo especial para paso 0
+                if (paso === 0) {
+                    instruccionPanel.classList.add('p0-highlight');
+                } else {
+                    instruccionPanel.classList.remove('p0-highlight');
+                }
+            }
+
+            // ---------- DIBUJAR ----------
+            function dibujar() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // FONDO BLANCO
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // PISO azul muy sutil
+                ctx.fillStyle = '#e3f0fa';
+                ctx.fillRect(0, canvas.height-70, canvas.width, 70);
+                
+                // Camino punteado
+                ctx.beginPath();
+                ctx.strokeStyle = '#3a7ca5';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([18, 25]);
+                ctx.moveTo(40, 360);
+                ctx.lineTo(860, 360);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // ---------- PIZARRÓN ----------
+                ctx.fillStyle = '#f5fbff';
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = '#bfd7e6';
+                ctx.fillRect(25, 180, 120, 100);
+                ctx.strokeStyle = '#1f6390';
+                ctx.lineWidth = 5;
+                ctx.strokeRect(25, 180, 120, 100);
+                
+                // Contenido pizarrón
+                if (haEscrito) {
+                    ctx.font = '22px "Courier New", monospace';
+                    ctx.fillStyle = '#0e5c7c';
+                    ctx.fillText('2+2=4', 35, 250);
+                    ctx.fillText('✓', 110, 250);
+                } else {
+                    ctx.font = '22px "Courier New", monospace';
+                    ctx.fillStyle = '#9fb6c5';
+                    ctx.fillText('_____', 35, 250);
+                }
+
+                // ---------- SILLA + HOJA ----------
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = '#c0dae8';
+                
+                // Silla
+                ctx.fillStyle = '#7ba5c2';
+                ctx.fillRect(SILLA_X-20, 250, 70, 16);
+                ctx.fillStyle = '#4f7e9e';
+                ctx.fillRect(SILLA_X-15, 190, 12, 70);
+                ctx.fillRect(SILLA_X+25, 190, 12, 70);
+                ctx.fillStyle = '#2f6182';
+                ctx.fillRect(SILLA_X-18, 265, 12, 35);
+                ctx.fillRect(SILLA_X+30, 265, 12, 35);
+                
+                // Hoja con información
+                ctx.fillStyle = '#fffed9';
+                ctx.shadowBlur = 10;
+                ctx.fillRect(SILLA_X, 140, 70, 80);
+                ctx.strokeStyle = '#1e5b7c';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(SILLA_X, 140, 70, 80);
+                
+                // Contenido hoja
+                ctx.font = 'bold 30px "Courier New", monospace';
+                ctx.fillStyle = '#134b70';
+                ctx.fillText('?', SILLA_X+20, 190);
+                ctx.font = 'bold 48px "Courier New", monospace';
+                ctx.fillStyle = '#0080b0';
+                ctx.fillText('!', SILLA_X+25, 230);
+                ctx.font = '16px "Inter", sans-serif';
+                ctx.fillStyle = '#1f5e89';
+                ctx.fillText('PALABRA', SILLA_X+8, 210);
+                
+                // Resaltado cuando observa
+                if (mirandoSilla) {
+                    ctx.strokeStyle = '#ff9800';
+                    ctx.lineWidth = 6;
+                    ctx.shadowBlur = 16;
+                    ctx.shadowColor = '#ffb74d';
+                    ctx.strokeRect(SILLA_X-3, 137, 76, 86);
+                }
+
+                // ---------- PERSONAJE ----------
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = '#a0b9c9';
+                
+                // Cuerpo
+                ctx.fillStyle = '#a2d0e0';
+                ctx.beginPath();
+                ctx.ellipse(x, 325, 22, 30, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Cabeza
+                ctx.fillStyle = '#ffe6c2';
+                ctx.beginPath();
+                ctx.arc(x, 285, 20, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Ojos
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(x-8, 279, 6, 0, 2*Math.PI);
+                ctx.arc(x+8, 279, 6, 0, 2*Math.PI);
+                ctx.fill();
+                
+                // Pupilas
+                ctx.fillStyle = '#1a384b';
+                if (mirandoSilla) {
+                    ctx.beginPath();
+                    ctx.arc(x-4, 279, 3, 0, 2*Math.PI);
+                    ctx.arc(x+12, 279, 3, 0, 2*Math.PI);
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(x-10, 279, 3, 0, 2*Math.PI);
+                    ctx.arc(x+6, 279, 3, 0, 2*Math.PI);
+                    ctx.fill();
+                }
+
+                // Brazos
+                ctx.fillStyle = '#95c2d1';
+                ctx.beginPath();
+                ctx.ellipse(x-30, 310, 10, 6 + (paso !== 0 ? brazoPhase*0.3 : 0), 0.3, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(x+30, 310, 10, 6 + (paso !== 0 ? brazoPhase*0.3 : 0), -0.3, 0, Math.PI*2);
+                ctx.fill();
+
+                // Pies
+                ctx.fillStyle = '#547c94';
+                ctx.beginPath();
+                ctx.ellipse(x-14, 360, 10 + (paso !== 0 ? piernaPhase*0.8 : 0), 6, 0.1, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(x+14, 360, 10 - (paso !== 0 ? piernaPhase*0.4 : 0), 6, -0.1, 0, Math.PI*2);
+                ctx.fill();
+
+                // Tiza solo en paso 3
+                if (paso === 3) {
+                    ctx.font = '42px sans-serif';
+                    ctx.fillStyle = '#3c6e8f';
+                    ctx.fillText('✏️', x + 45, 280 + writeShake);
+                }
+
+                ctx.shadowBlur = 0;
+            }
+
+            // ---------- MOVIMIENTO Y ANIMACIÓN ----------
+            function animar() {
+                // Solo mover si no estamos en paso 0
+                if (paso !== 0) {
+                    // Movimiento suave
+                    if (Math.abs(x - targetX) > 1.5) {
+                        if (x < targetX) x += 5.2;
+                        if (x > targetX) x -= 5.2;
+                    } else {
+                        x = targetX;
+                    }
+
+                    // PASO 1: corre a silla y observa
+                    if (paso === 1) {
+                        targetX = SILLA_X - 40;
+                        mirandoSilla = true;
+                        haEscrito = false;
+                        piernaPhase = (piernaPhase + 0.4) % 3;
+                        brazoPhase = (brazoPhase + 0.35) % 3;
+                    }
+                    // PASO 2: regresa al pizarrón
+                    else if (paso === 2) {
+                        targetX = PIZARRA_X + 30;
+                        mirandoSilla = false;
+                        piernaPhase = (piernaPhase + 0.5) % 3;
+                        brazoPhase = (brazoPhase + 0.45) % 3;
+                        if (Math.abs(x - targetX) < 8) {
+                            haEscrito = true;
+                        }
+                    }
+                    // PASO 3: ganador, escribiendo
+                    else if (paso === 3) {
+                        targetX = PIZARRA_X + 30;
+                        mirandoSilla = false;
+                        piernaPhase = 0;
+                        brazoPhase = 0.5;
+                        haEscrito = true;
+                        writeShake = Math.sin(Date.now() * 0.025) * 3;
+                    }
+                } else {
+                    // Paso 0: personaje quieto en inicio
+                    x = INICIO_X + 10;
+                    targetX = INICIO_X + 10;
+                    mirandoSilla = false;
+                    haEscrito = false;
+                    piernaPhase = 0;
+                    brazoPhase = 0;
+                }
+
+                dibujar();
+                requestAnimationFrame(animar);
+            }
+
+            // ---------- CAMBIAR PASO (SOLO SIGUIENTE) ----------
+            function siguientePaso() {
+                if (paso === 0) {
+                    paso = 1;
+                    targetX = SILLA_X - 40;
+                    mirandoSilla = true;
+                    haEscrito = false;
+                } else if (paso === 1) {
+                    paso = 2;
+                    targetX = PIZARRA_X + 30;
+                    mirandoSilla = false;
+                    haEscrito = true;
+                } else if (paso === 2) {
+                    paso = 3;
+                    targetX = PIZARRA_X + 30;
+                    mirandoSilla = false;
+                    haEscrito = true;
+                } else if (paso === 3) {
+                    window.location.href = '/tablero.html';
+                    return; // importante para que no siga ejecutando código
+                }
+                // actualizarUI();
+            }
+
+            // ---------- INIT ----------
+            window.onload = function() {
+                // Estado inicial: PASO 0
+                paso = 0;
+                x = INICIO_X + 10;
+                targetX = INICIO_X + 10;
+                mirandoSilla = false;
+                haEscrito = false;
+                
+                actualizarUI();
+                
+                // Evento único: botón siguiente
+                document.getElementById('siguienteBtn').addEventListener('click', siguientePaso);
+                
+                // Click en canvas también avanza
+                canvas.addEventListener('click', siguientePaso);
+                
+                // Iniciar animación
+                requestAnimationFrame(animar);
+            };
+        })();
+    </script>
+</body>
+</html>
